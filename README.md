@@ -16,8 +16,6 @@ The system simulates three distinct capital management scenarios:
 * **Option Modeling:** Parametric valuation of Put Spreads and Long Calls accounting for time decay (Theta) and intrinsic value.
 * **Automated Data:** Seamless integration with Binance via the CCXT library.
 
----
-
 ## Installation & Usage
 
 1. **Install dependencies:**
@@ -34,14 +32,8 @@ python main.py
 
 ```
 
-
-
----
-
 ## Performance Visualization
 <img width="1558" height="795" alt="image" src="https://github.com/user-attachments/assets/5c5c0785-9631-46b9-a4db-186878eb0754" />
-
----
 
 ## Professional Metrics
 
@@ -52,8 +44,6 @@ The engine generates a detailed console report including:
 * **Crisis Coverage:** Efficiency of the insurance (Put Spreads) during market sell-offs.
 
 <img width="681" height="524" alt="image" src="https://github.com/user-attachments/assets/844e638c-5d08-436b-abcb-57090576b2ac" />
-
----
 
 ## Limitations & Disclaimers
 
