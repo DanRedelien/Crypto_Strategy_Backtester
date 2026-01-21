@@ -1,7 +1,3 @@
-Here is the translated and formatted `README.md` for your project.
-
----
-
 # Crypto Strategy Backtester (DCA + Options)
 
 An institutional-grade tool for backtesting cryptocurrency investment strategies. This project evaluates traditional Dollar Cost Averaging (DCA) against sophisticated hedging and asset-replacement techniques using options.
