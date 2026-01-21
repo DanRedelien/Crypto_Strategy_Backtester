@@ -64,6 +64,3 @@ Users should be aware of the following model assumptions:
 * **Taxation:** The model does not include capital gains tax or other fiscal obligations.
 
 **Development Note:** This codebase was primarily architected and written by **Gemini 3.0** and **Claude**. While it implements complex financial logic (XIRR, NAV adjustments), it should be thoroughly reviewed before being used for actual trading or financial decisions.
----
-
-**Would you like me to add a section explaining the specific math behind the Brenner-Subrahmanyam approximation used in the code?**
