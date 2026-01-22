@@ -11,7 +11,7 @@ class DataEngine:
     def fetch_data(self):
         print(f"[{self.cfg.SYMBOL}] Fetching OHLCV Data from {self.cfg.EXCHANGE_ID}...")
         
-        # Конвертация дат в timestamp ms
+        # Convert dates to timestamp ms
         since = self.exchange.parse8601(self.cfg.START_DATE)
         end_ts = self.exchange.parse8601(self.cfg.END_DATE)
         
@@ -31,7 +31,7 @@ class DataEngine:
                 since = ohlcv[-1][0] + 1
                 all_ohlcv.extend(ohlcv)
                 
-                # Небольшая пауза, чтобы не дудосить API
+                # Small pause to avoid DDOSing the API
                 time.sleep(0.1)
                 
             except Exception as e:
@@ -41,11 +41,11 @@ class DataEngine:
         if not all_ohlcv:
             return pd.DataFrame()
 
-        # Создаем DataFrame
+        # Create DataFrame
         df = pd.DataFrame(all_ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
         df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
         
-        # Фильтруем по датам
+        # Filter by dates
         mask = (df['timestamp'] >= self.cfg.START_DATE) & (df['timestamp'] <= self.cfg.END_DATE)
         df = df.loc[mask].reset_index(drop=True)
         
