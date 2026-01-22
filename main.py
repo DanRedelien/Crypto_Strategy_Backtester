@@ -25,7 +25,7 @@ if __name__ == "__main__":
     # 4. Analytics
     analytics = InstitutionalAnalytics(risk_free_rate=cfg.RISK_FREE_RATE)
     
-    # Передаем df_results И скрытую статистику хеджа
+    # Pass df_results AND hidden hedge statistics
     df_processed, metrics = analytics.process_results(df_results, hedge_stats=bt.final_stats)
     
     analytics.print_stats(metrics)
