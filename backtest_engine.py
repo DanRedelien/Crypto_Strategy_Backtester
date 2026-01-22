@@ -12,7 +12,7 @@ class BacktestResult:
     hedged_equity: float
     call_equity: float
     price: float
-    deposit_flow: float # Для корректного расчета TWR
+    deposit_flow: float # For correct TWR calculation
     invested_total: float
 
 class BacktestEngine:
@@ -47,7 +47,7 @@ class BacktestEngine:
         start_price = self.data.iloc[0]['close']
         self._buy_spot_bench(start_price)
         self._buy_spot_hedged(start_price)
-        # Call стратегия сама купит опцион в первом шаге цикла
+        # Call strategy itself will buy the option in the first loop step
 
         for i, row in self.data.iterrows():
             date = row['timestamp']
@@ -58,7 +58,7 @@ class BacktestEngine:
             if date.day == self.cfg.DEPOSIT_DAY and date.month != self.last_month:
                 self.last_month = date.month
                 
-                # Пополнение
+                # Deposit
                 dep = self.cfg.MONTHLY_DEPOSIT
                 deposit_flow = dep
                 
@@ -67,7 +67,7 @@ class BacktestEngine:
                 self.call_cash += dep
                 self.invested_total += dep
                 
-                # Докупка спота
+                # Buy Spot
                 self._buy_spot_bench(price)
                 self._buy_spot_hedged(price)
 
@@ -112,15 +112,15 @@ class BacktestEngine:
     # --- HELPERS ---
 
     def _buy_spot_bench(self, price):
-        """ Покупаем спот на весь кэш (Benchmark) """
+        """ Buy spot with all cash (Benchmark) """
         if self.bench_cash > 0.01:
             amount = (self.bench_cash * (1 - self.cfg.FEE_RATE)) / price
             self.bench_btc += amount
             self.bench_cash = 0
 
     def _buy_spot_hedged(self, price):
-        """ Покупаем спот на весь кэш (Hedged) """
-        # Стратегия держит 100% в BTC, а хедж оплачивает продажей части BTC
+        """ Buy spot with all cash (Hedged) """
+        # Strategy holds 100% in BTC, hedge is paid by selling part of BTC
         if self.hedged_cash > 0.01:
             amount = (self.hedged_cash * (1 - self.cfg.FEE_RATE)) / price
             self.hedged_btc += amount
@@ -129,7 +129,7 @@ class BacktestEngine:
     def _process_hedge_strategy(self, date, price):
         # 1. Check Expiry
         if self.active_hedge and date >= self.active_hedge.expiry:
-            # Получаем выплату (Cash Settlement)
+            # Receive payoff (Cash Settlement)
             payoff = self.active_hedge.get_total_payoff(price)
             if payoff > 0:
                 self.hedged_cash += payoff
@@ -139,29 +139,29 @@ class BacktestEngine:
 
         # 2. Open New Hedge (if none exists)
         if self.active_hedge is None:
-            # Считаем текущий Equity портфеля
+            # Calculate current portfolio Equity
             current_equity = (self.hedged_btc * price) + self.hedged_cash
             
-            # Бюджет на хедж (Cost)
+            # Hedge Budget (Cost)
             hedge_budget = current_equity * self.cfg.HEDGE_COST_PCT
             
-            # Сколько нужно продать BTC, чтобы оплатить хедж?
-            # Если кэша хватает (например, от прошлой выплаты) - ок.
-            # Если нет - ребалансируем.
+            # How much BTC to sell to pay for hedge?
+            # If cash is sufficient (e.g. from past payoff) - ok.
+            # If not - rebalance.
             if self.hedged_cash < hedge_budget:
                 deficit = hedge_budget - self.hedged_cash
-                # Продаем BTC
+                # Sell BTC
                 btc_to_sell = (deficit * (1 + self.cfg.FEE_RATE)) / price
                 if self.hedged_btc >= btc_to_sell:
                     self.hedged_btc -= btc_to_sell
                     self.hedged_cash += deficit
             
-            # Оплачиваем
+            # Pay
             self.hedged_cash -= hedge_budget
             self.hedge_stats['cost'] += hedge_budget
             
-            # Создаем объект хеджа
-            # QTY: Какое кол-во BTC мы защищаем? (Notional = Equity)
+            # Create hedge object
+            # QTY: How much BTC are we protecting? (Notional = Equity)
             qty_to_hedge = current_equity / price
             
             expiry = date + pd.Timedelta(days=self.cfg.HEDGE_DURATION_DAYS)
@@ -189,22 +189,22 @@ class BacktestEngine:
             
         # 3. Open New Call
         if self.active_call is None:
-            # Мы хотим экспозицию 1:1 к капиталу.
-            # Если у нас $10,000 кэша, мы хотим контролировать $10,000 в биткоине.
+            # We want 1:1 exposure to capital.
+            # If we have $10,000 cash, we want to control $10,000 in Bitcoin.
             # Qty = Capital / Price
             
-            # Сначала создаем объект, чтобы узнать цену за 1 шт
+            # First create object to find unit price
             expiry = date + pd.Timedelta(days=self.cfg.CALL_DURATION_DAYS)
             
-            # Предварительный расчет Qty
+            # Preliminary Qty calculation
             available_capital = self.call_cash
             qty_needed = available_capital / price
             
             temp_call = ParametricATMCall(price, expiry, self.cfg.CALL_STRAT_IV, qty_needed)
             total_premium = temp_call.total_cost
             
-            # Проверка: хватает ли денег на премию?
-            # Премия ATM колла обычно 4-5%. Кэша у нас 100%. Хватает с запасом.
+            # Check: enough money for premium?
+            # ATM call premium usually 4-5%. We have 100% cash. Plenty.
             
             self.call_cash -= total_premium
             self.active_call = temp_call
