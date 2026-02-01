@@ -1,6 +1,9 @@
 # Crypto Strategy Backtester (DCA + Options)
 
-An institutional-grade tool for backtesting cryptocurrency investment strategies. This project evaluates traditional Dollar Cost Averaging (DCA) against sophisticated hedging and asset-replacement techniques using options.
+A tool for backtesting cryptocurrency investment strategies. This project evaluates traditional Dollar Cost Averaging (DCA) against sophisticated hedging and asset-replacement techniques using options.
+
+<img width="1578" height="799" alt="image" src="https://github.com/user-attachments/assets/434d13be-74b8-43de-8644-3fe70e956ddc" />
+
 
 ## Overview
 
@@ -61,14 +64,7 @@ COLLAR_PUT_SHORT_PCT = 0.70     # Sell Put at 70%
 
 ## Sample Output
 
-```
-METRIC                         | BENCH        | HEDGED       | CALL         | COLLAR      
--------------------------------------------------------------------------------------------
-MWR / XIRR (Investor Yield)    | 31.36%       | 21.59%       | 3.66%        | 37.62%      
-Total Net Profit               | $62,586      | $38,870      | $5,448       | $80,153     
-Max Drawdown                   | -67.38%      | -42.31%      | -39.29%      | -31.81%     
-CVaR 95% (Expected Shortfall)  | -1.34%       | -1.12%       | -0.88%       | -1.08%      
-```
+<img width="823" height="476" alt="image" src="https://github.com/user-attachments/assets/62977b71-8e11-4cec-b3b5-88da075256d3" />
 
 ## Limitations
 
@@ -80,8 +76,3 @@ CVaR 95% (Expected Shortfall)  | -1.34%       | -1.12%       | -0.88%       | -1
 ## Development
 
 Codebase architected with assistance from **Gemini 3.0 Pro** and **Claude Opus**.
-
-Framework documentation:
-- `dev_context/MATH_SPEC.md` - Financial mathematics specifications
-- `dev_context/CLEAN_CODE_MCP.md` - Code quality standards
-- `dev_context/VISUALIZATION_SPEC.md` - Chart styling guidelines
